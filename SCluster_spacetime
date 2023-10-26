@@ -16,11 +16,6 @@ SCluster_spacetime <- nimbleCode({
                       (z_trend[i]==7)*(0*t + beta72_inc*(t - 7)*step(t - 7)) +
                       (z_trend[i]==8)*(beta81_dec*t*(1 - step(t - 7)) + beta82_inc*(t - 7)*step(t - 7)) + 
                       (z_trend[i]==9)*(beta91_inc*t*(1 - step(t - 7)) + beta92_inc*(t - 7)*step(t - 7)) 
-      # +
-                      # (z_trend[i]==10)*(0*t + gamma101*(t==8) + gamma102*(t==9)) +
-                      # (z_trend[i]==11)*(beta111_dec*t*(1 - step(t - 7)) + gamma111*(t==8) + gamma112*(t==9)) + 
-                      # (z_trend[i]==12)*(beta121_inc*t*(1 - step(t - 7)) + gamma121*(t==8) + gamma122*(t==9)) +
-                      # (z_trend[i]==10)*(delta1[t]*(1 - step(t - 7)))
       
     }
     
@@ -38,28 +33,16 @@ SCluster_spacetime <- nimbleCode({
                       (z_trend[i]==7)*(0*t + beta72_inc*(t - 7)*step(t - 7)) +
                       (z_trend[i]==8)*(beta81_dec*t*(1 - step(t - 7)) + beta82_inc*(t - 7)*step(t - 7)) + 
                       (z_trend[i]==9)*(beta91_inc*t*(1 - step(t - 7)) + beta92_inc*(t - 7)*step(t - 7)) 
-      # +
-                      # (z_trend[i]==10)*(0*t + gamma101*(t==8) + gamma102*(t==9)) +
-                      # (z_trend[i]==11)*(beta111_dec*t*(1 - step(t - 7)) + gamma111*(t==8) + gamma112*(t==9)) + 
-                      # (z_trend[i]==12)*(beta121_inc*t*(1 - step(t - 7)) + gamma121*(t==8) + gamma122*(t==9)) +
-                      # (z_trend[i]==10)*(delta2[t - 6]*step(t - 7))
       
     }
     
     theta[i] <- inprod(z[i,1:k],eta[1:k])
     z[i,1:k] ~ dmulti(prlevels[1:k],1)
-    
     z_trend[i] ~ dcat(prlevels_trend[1:k_trend])
     
   }
 
   gamma1 ~ dnorm(0,0.001)
-  gamma101 ~ dnorm(0,0.001)
-  gamma102 ~ dnorm(0,0.001)
-  gamma111 ~ dnorm(0,0.001)
-  gamma112 ~ dnorm(0,0.001)
-  gamma121 ~ dnorm(0,0.001)
-  gamma122 ~ dnorm(0,0.001)
   
   # Increasing-decreasing trends
   
@@ -69,18 +52,13 @@ SCluster_spacetime <- nimbleCode({
   beta82_inc ~ T(dnorm(0,0.001), 0, 400)
   beta91_inc ~ T(dnorm(0,0.001), 0, 400)
   beta92_inc ~ T(dnorm(0,0.001), 0, 400)
-  # beta102_inc ~ T(dnorm(0,0.001), 0, 400)
-  # beta112_inc ~ T(dnorm(0,0.001), 0, 400)
-  # beta121_inc ~ T(dnorm(0,0.001), 0, 400)
-  # beta122_inc ~ T(dnorm(0,0.001), 0, 400)
-  
+
   beta21_dec ~ T(dnorm(0,0.001), -400, 0)
   beta42_dec ~ T(dnorm(0,0.001), -400, 0)
   beta51_dec ~ T(dnorm(0,0.001), -400, 0)
   beta52_dec ~ T(dnorm(0,0.001), -400, 0)
   beta62_dec ~ T(dnorm(0,0.001), -400, 0)
   beta81_dec ~ T(dnorm(0,0.001), -400, 0)
-  # beta111_dec ~ T(dnorm(0,0.001), -400, 0)
   
   prlevels[1:k] ~ ddirch(alfa[1:k])
   prlevels_trend[1:k_trend] ~ ddirch(alfa_trend[1:k_trend])
@@ -98,29 +76,5 @@ SCluster_spacetime <- nimbleCode({
     prop[j] <- sum(z[1:N_barrios,j])
   }
   
-  # RW2 prior on the effect of the year
-  # delta[1:N_Y] ~ dcar_normal(adjY[1:N_Y_adj], weightsY[1:N_Y_adj], numY[1:N_Y], tau.delta, zero_mean = 1)
-  # sigma2.delta ~ dgamma(1,0.5)
-  # tau.delta <- 1/sigma2.delta
-  
-  # RW1 prior on the effect of the year
-  
-  delta1[1] ~ dnorm(0,tau.delta1)
-  sigma2.delta1 ~ dgamma(1,0.5)
-  tau.delta1 <- 1/sigma2.delta1
-  for (j in 2:6){
-    delta1[j] ~ dnorm(delta1[j-1],tau.delta1)
-  }
-  
-  delta2[1] ~ dnorm(0,tau.delta2)
-  sigma2.delta2 ~ dgamma(1,0.5)
-  tau.delta2 <- 1/sigma2.delta2
-  for (j in 2:3){
-    delta2[j] ~ dnorm(delta2[j-1],tau.delta2)
-  }
-  
-  # for(j in 1:k_trend){
-  #   prop_trend[j] <- sum(z_trend[1:N_barrios,j])
-  # }
   
 })
