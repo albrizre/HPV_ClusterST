@@ -14,8 +14,6 @@ SCluster_spacetime_14 <- nimbleCode({
       
     }
     
-    #theta[i] <- inprod(z[i,1:k],eta[1:k])
-    #z[i,1:k] ~ dmulti(prlevels[1:k],1)
     theta[i] <- eta[z[i]]
     z[i] ~ dcat(prlevels[1:k])
     z_trend[i] ~ dcat(prlevels_trend[1:k_trend])
@@ -39,10 +37,6 @@ SCluster_spacetime_14 <- nimbleCode({
     increta[j] ~ dgamma(1,1)
   }
   
-#  for(j in 1:k){
-#    prop[j] <- sum(z==j)
-#  }
-  
   # RW1 prior
   
   delta1[1] <- 0
@@ -50,7 +44,6 @@ SCluster_spacetime_14 <- nimbleCode({
   tau.delta1 <- 1/sigma2.delta1
   for (j in 2:7){
     delta1[j] ~ dnorm(delta1[j-1],tau.delta1)
-  }
-  
+  }  
   
 })
